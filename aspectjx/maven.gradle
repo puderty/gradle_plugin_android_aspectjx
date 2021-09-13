@@ -1,4 +1,4 @@
-apply plugin: 'maven'
+apply plugin: 'maven-publish'
 
 version=LIB_VERSION
 group = LIB_GROUP
@@ -9,40 +9,64 @@ if (!LIB_ISRELEASE.toBoolean()){
     nexusRepositoryUrl=nexusSnapshots
 }
 
-uploadArchives {
-    repositories {
-        mavenDeployer {
-            repository(url: "$nexusRepositoryUrl") {
-                authentication(userName: nexusUserName, password: nexusPassword)
-            }
-
-            pom.project {
-                name LIB_ARTIFACT
+afterEvaluate {
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                //定义插件的在本地 maven 中的 id
                 groupId LIB_GROUP
                 artifactId LIB_ARTIFACT
-                version version
-                packaging 'jar'
-                description LIB_DES
-                licenses {
-                    license {
-                        name LICENCE_NAME
-                        url LICENCE_URL
-                        distribution LICENCE_DIST
-                    }
-                }
-                developers {
-                    developer {
-                        id DEVELOPER_ID
-                        name DEVELOPER_NAME
-                        email DEVELOPER_EMAIL
-                    }
-                }
-
-                organization {
-                    name ORGANIZATION_NAME
-                    url ORGANIZATION_URL
-                }
+                //定义插件的在本地 maven 中的版本号
+                version LIB_VERSION
+                from components.java
             }
         }
     }
+    publishing {
+        repositories {
+            maven {
+                // 发布位置
+                url uri('../repositories')
+            }
+        }
+    }
+
 }
+
+//uploadArchives {
+//    repositories {
+//        mavenDeployer {
+//            repository(url: "$nexusRepositoryUrl") {
+//                authentication(userName: nexusUserName, password: nexusPassword)
+//            }
+//
+//            pom.project {
+//                name LIB_ARTIFACT
+//                groupId LIB_GROUP
+//                artifactId LIB_ARTIFACT
+//                version version
+//                packaging 'jar'
+//                description LIB_DES
+//                licenses {
+//                    license {
+//                        name LICENCE_NAME
+//                        url LICENCE_URL
+//                        distribution LICENCE_DIST
+//                    }
+//                }
+//                developers {
+//                    developer {
+//                        id DEVELOPER_ID
+//                        name DEVELOPER_NAME
+//                        email DEVELOPER_EMAIL
+//                    }
+//                }
+//
+//                organization {
+//                    name ORGANIZATION_NAME
+//                    url ORGANIZATION_URL
+//                }
+//            }
+//        }
+//    }
+//}
